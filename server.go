@@ -9,6 +9,7 @@ import (
 )
 
 func main() {
+	bindAddress := os.Getenv("BIND")
 	port := os.Getenv("PORT")
 	secret := os.Getenv("SECRET")
 
@@ -16,7 +17,7 @@ func main() {
 		port = "8080"
 	}
 
-	log.Printf("Booting on port %s", port)
+	log.Printf("Booting on %s:%s", bindAddress, port)
 
 	if secret == "" {
 		secret = "secret"
@@ -27,7 +28,7 @@ func main() {
 	http.HandleFunc("/temperatures", Temperatures)
 	http.HandleFunc("/"+secret+"/temperature", StoreTemperature)
 
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf("%s:%s", bindAddress, port), nil))
 }
 
 func WriteJSON(content interface{}, writer http.ResponseWriter) {
